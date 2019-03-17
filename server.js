@@ -2,21 +2,20 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const passport = require("passport");
+const swiftmatching = require("./routes/api/swiftmatching");
 
 require("dotenv").config();
 
-
 //here will be different route path
 const users = require("./routes/api/users");
-
-
-
 
 const app = express();
 
 //Body parser Middleware
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use("/api/users", users);
+app.use("/api/swiftmatching", swiftmatching);
 
 // DB Config
 const db = require("./config/keys").mongoURI;
@@ -39,19 +38,15 @@ app.use(express.static(path.join(__dirname, "client/build")));
 //use Routes goes here
 app.use("/api/users", users);
 
-
-
-
 app.get("/*", function(req, res) {
-    res.sendFile(path.join(__dirname, "./client/build/index.html"), function(
-      err
-    ) {
-      if (err) {
-        res.status(500).send(err);
-      }
-    });
+  res.sendFile(path.join(__dirname, "./client/build/index.html"), function(
+    err
+  ) {
+    if (err) {
+      res.status(500).send(err);
+    }
   });
-  const port = process.env.PORT || 5000;
-  
-  app.listen(port, () => console.log(`Server running on port ${port}`));
-  
+});
+const port = process.env.PORT || 5000;
+
+app.listen(port, () => console.log(`Server running on port ${port}`));
